@@ -8,7 +8,7 @@
   <display-name>Simple Meal Preferences Application</display-name>  
   <servlet>
   	<servlet-name>Search Food</servlet-name>
-  	<servlet-class>com.webAppDev.searchFood</servlet-class>
+  	<servlet-class>com.webAppDev.servlets.SearchFood</servlet-class>
   </servlet>
   
   <servlet-mapping>
