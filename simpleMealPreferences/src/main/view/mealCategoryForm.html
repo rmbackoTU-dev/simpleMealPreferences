@@ -1,19 +1,19 @@
 <html>
 <body>
-	<h1 align="center">Search Meals</h1>
-	<form method="POST"
+	<h1  id="mainHeading" align="center">Search Meals</h1>
+	<p id="pageDescription" >Select meal category.</p>
+	<form id="search-form" method="POST"
 		action="SearchFood.do">
-		<p>Select meal category </p>
-		<p> Type of meal: </p>
-		<select name="meal-type" size="1", width="9em" height="auto">
-			<option value="breakfast">breakfast </option>
-			<option value="lunch">lunch</option>
-			<option value="dinner">dinner</option>
-			<option value="desert">desert</option>
+		<label id="meal-type-label" for="meal-type">Meal-type:</label>
+		<select id="meal-typeList" name="meal-type" size="1", width="9em" height="auto">
+			<option id="meal-option-one" value="breakfast">breakfast</option>
+			<option id="meal-option-two" value="lunch">lunch</option>
+			<option id="meal-option-three" value="dinner">dinner</option>
+			<option id="meal-option-four" value="desert">desert</option>
 		</select>
 		<br><br>
 		<center>
-			<input type="SUBMIT" value="Submit">
+			<input id="search-button" type="SUBMIT" value="Submit">
 		</center>
 	</form>
 </body>

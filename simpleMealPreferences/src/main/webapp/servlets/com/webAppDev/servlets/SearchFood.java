@@ -15,8 +15,8 @@ public class SearchFood extends HttpServlet {
 	
 		response.setContentType("text/html");
 		PrintWriter out= response.getWriter();
-		out.println("Meals Found: <br>");
+		out.println("<p id='description'> Meals Found: </p> <br>");
 		String category=request.getParameter("meal-type");
-		out.println("<br> Got meal category: "+category);
+		out.println("<p id='selection-statement'>Got meal category: "+category+"</p>");
 	}
 }
