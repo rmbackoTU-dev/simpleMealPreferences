@@ -4,10 +4,7 @@ package com.webAppDev;
 import java.lang.Thread;
 import java.util.concurrent.TimeUnit;
 
-import org.junit.platform.runner.JUnitPlatform;
-import org.junit.runner.RunWith;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.Assert;
 import org.openqa.selenium.*;
