@@ -276,8 +276,8 @@ public class SearchFoodTest {
 				.perform();
 			Thread.sleep(SLEEP_TIME);
 			menuItem=fireFoxDriver.findElement(By.id("meal-option-four"));
-			Assert.assertEquals("desert",menuItem.getAttribute("value"));
-			Assert.assertEquals("desert", menuItem.getText());
+			Assert.assertEquals("dessert",menuItem.getAttribute("value"));
+			Assert.assertEquals("dessert", menuItem.getText());
 			builder.moveByOffset((expectedWidth*4)+1, 0)
 				.click()
 				.perform();
@@ -299,8 +299,8 @@ public class SearchFoodTest {
 				.perform();
 			Thread.sleep(SLEEP_TIME);
 			menuItem=chromeDriver.findElement(By.id("meal-option-four"));
-			Assert.assertEquals("desert",menuItem.getAttribute("value"));
-			Assert.assertEquals("desert", menuItem.getText());
+			Assert.assertEquals("dessert",menuItem.getAttribute("value"));
+			Assert.assertEquals("dessert", menuItem.getText());
 			builder.moveByOffset((expectedWidth*4)+1, 0)
 				.click()
 				.perform();
@@ -505,13 +505,13 @@ public class SearchFoodTest {
 			//add one to the actual height times four to move to the list option below
 			//fourth option
 			Select mealSelect=new Select(menuList);
-			mealSelect.selectByVisibleText("desert");
+			mealSelect.selectByVisibleText("dessert");
 			submitButton=fireFoxDriver.findElement(By.id("search-button"));
 			builder.click(submitButton);
 			builder.perform();
 			Thread.sleep(SLEEP_TIME);
 			selectionStatement=fireFoxDriver.findElement(By.id("selection-statement"));
-			Assert.assertEquals("Got meal category: desert", selectionStatement.getText());
+			Assert.assertEquals("Got meal category: dessert", selectionStatement.getText());
 	
 			//Chrome test
 			parameterSetupChrome();
@@ -525,13 +525,13 @@ public class SearchFoodTest {
 			//add one to the actual height times two to move to the list option below
 			//second option
 			mealSelect=new Select(menuList);
-			mealSelect.selectByVisibleText("desert");
+			mealSelect.selectByVisibleText("dessert");
 			submitButton=chromeDriver.findElement(By.id("search-button"));
 			builder.click(submitButton);
 			builder.perform();
 			Thread.sleep(SLEEP_TIME);
 			selectionStatement=chromeDriver.findElement(By.id("selection-statement"));
-			Assert.assertEquals("Got meal category: desert", selectionStatement.getText());		
+			Assert.assertEquals("Got meal category: dessert", selectionStatement.getText());		
 		}
 		catch(InterruptedException ie)
 		{
