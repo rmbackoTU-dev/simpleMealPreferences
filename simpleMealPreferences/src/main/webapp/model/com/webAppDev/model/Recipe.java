@@ -32,6 +32,10 @@ public class Recipe
 	{
 		if(name == null || ingredients == null || directions == null || name == "")
 		{
+			if(name != null)
+			{
+				System.out.println("Recieved name: "+name);
+			}
 			throw new IllegalArgumentException();
 		}
 		this.setCategory(category);

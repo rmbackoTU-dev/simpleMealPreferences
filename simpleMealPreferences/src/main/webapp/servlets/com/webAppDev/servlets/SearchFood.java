@@ -19,4 +19,7 @@ public class SearchFood extends HttpServlet {
 		String category=request.getParameter("meal-type");
 		out.println("<p id='selection-statement'>Got meal category: "+category+"</p>");
 	}
+	
+	
+
 }
