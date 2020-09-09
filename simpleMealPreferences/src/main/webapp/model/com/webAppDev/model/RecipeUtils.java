@@ -51,8 +51,9 @@ public class RecipeUtils {
 			String candidateName=recipeCandidate.getRecipeName();
 			int recipeCandidateNameSize=candidateName.length();
 			int stringDiff=recipeCandidateNameSize-subStringLength;
-			//Increment characters until incrementing inside
-			//the while would result in a ArrayOutOfBounds
+			//Increment characters until incrementing the difference between the
+			//searchWord and found word. If  the string is at the sub string length 
+			//it really should not start, and just return 0.
 			for(int j=0; j<=stringDiff; j++)
 			{
 				int k=0;

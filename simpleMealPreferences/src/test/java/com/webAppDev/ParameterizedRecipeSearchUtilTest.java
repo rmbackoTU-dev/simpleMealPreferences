@@ -1,85 +1,125 @@
 package com.webAppDev;
 
-import java.lang.Thread;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.*;
+
 
 import org.junit.Assert;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.*;
-
 
 
 import  com.webAppDev.model.RecipeUtils;
 import  com.webAppDev.model.Recipe;
 
-public class ParameterizedRecipeSearchUtilTest {
 
+public class ParameterizedRecipeSearchUtilTest {
+	
+	private static ArrayList<Recipe> inputRecipeList;
+	private static ArrayList<Recipe> outputRecipeList;
+	private String searchTerm;
+	private static int expectedResult;
+	private static RecipeUtils recipeTools;
 	
 	public static char[] latinAlphabet= {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l',
 	                                    'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
 	                                    'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N',
 	                                    'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', ' '};
+	
+	
 	@ParameterizedTest
-	@CsvFileSource(resources= "testAssets/searchUnitTestParameters.csv", numLinesToSkip=1)
+	@CsvFileSource(resources="testAssets/searchUnitTestParameters.csv", numLinesToSkip=1)
 	public void parameterizedTestSearchRecipesWithString(int searchSpaceSize, 
 			int searchWordSize, int indexOfFirstFoundWord, int indexOfFirstCharMatch,
 			int matchWordsSize, int numberOfMatches, int matchSpacing,
-			int expectedResult)
+			int result)
 	{
 		/**
 		 * expectedResult:
 		 * 0 - normal execution (matches)
 		 * 1 - normal execution (no matches)
-		 * 2 - null/invalid input exception
+		 * 2 - normal execution (no matches, search string larger than matches)
 		 */
-		if(expectedResult == 0)
+		expectedResult=result;
+		HashMap<String, ArrayList<Recipe>> inputSpace=searchWordsFactory(searchSpaceSize, searchWordSize, indexOfFirstFoundWord, 
+				indexOfFirstCharMatch, matchWordsSize, numberOfMatches, matchSpacing);
+		for(Map.Entry<String, ArrayList<Recipe>> entry: inputSpace.entrySet())
 		{
-			ArrayList<Recipe> testRecipeArrayInput;
-			HashMap<String, ArrayList<Recipe>> inputSpace;
-			ArrayList<Recipe> testRecipeArrayOutput;
-			inputSpace=searchWordsFactory(searchSpaceSize, searchWordSize, indexOfFirstFoundWord, 
-					indexOfFirstCharMatch, matchWordsSize, numberOfMatches, matchSpacing);
-			for(Map.Entry<String, ArrayList<Recipe>> entry: inputSpace.entrySet())
-			{
-				String searchWord=entry.getKey();
-				testRecipeArrayInput=entry.getValue();
-				testRecipeArrayOutput=resultListFactory(testRecipeArrayInput,indexOfFirstFoundWord,
-						matchSpacing, numberOfMatches);
-				System.out.println("Using Search word: "+searchWord);
-				System.out.println("Input Recipes: ");
-				printRecipeNames(testRecipeArrayInput);
-				System.out.println("Output Recipes: ");
-				printRecipeNames(testRecipeArrayOutput);
-				//Assert the correct number of entries are returned
-				RecipeUtils testUtils=new RecipeUtils(testRecipeArrayOutput);
-				ArrayList<Recipe> recipeSearchResults=testUtils.searchRecipesBySubString(searchWord);
-				Assert.assertEquals(testRecipeArrayOutput.size(), recipeSearchResults.size());
-				Assert.assertEquals(testRecipeArrayOutput.get(0), recipeSearchResults.get(0));
-			}
-			
-			
+			searchTerm=entry.getKey();
+			inputRecipeList=entry.getValue();
+			outputRecipeList=resultListFactory(inputRecipeList,indexOfFirstFoundWord,
+					matchSpacing, numberOfMatches);
+            recipeTools=new RecipeUtils(outputRecipeList);
+            if(expectedResult == 0)
+            {
+					System.out.println("Input Recipes: ");
+					printRecipeNames(inputRecipeList);
+					System.out.println("Output Recipes: ");
+					printRecipeNames(outputRecipeList);
+					//Assert the correct number of entries are returned
+					recipeTools=new RecipeUtils(outputRecipeList);
+					ArrayList<Recipe> recipeSearchResults=recipeTools.searchRecipesBySubString(searchTerm);
+					Assert.assertEquals(outputRecipeList.size(), recipeSearchResults.size());
+					Assert.assertEquals(outputRecipeList.get(0), recipeSearchResults.get(0));	
+            }
+            else if(expectedResult == 1)
+            {
+            	System.out.println("Using Search word: "+searchTerm);
+            	System.out.println("Input Recipes: ");
+            	printRecipeNames(inputRecipeList);
+            	System.out.println("Output Recipes: ");
+            	printRecipeNames(outputRecipeList);
+            	//Assert the correct number of entries are returned
+            	ArrayList<Recipe> recipeSearchResults=recipeTools.searchRecipesBySubString(searchTerm);
+            	Assert.assertEquals(recipeSearchResults.size(), 0);
+            }
+            else if(expectedResult == 2)
+            {
+            	System.out.println("Using Search word: "+searchTerm);
+            	System.out.println("Input Recipes: ");
+            	printRecipeNames(inputRecipeList);
+            	System.out.println("Output Recipes: ");
+            	printRecipeNames(outputRecipeList);
+            	//Assert the correct number of entries are returned
+            	ArrayList<Recipe> recipeSearchResults=recipeTools.searchRecipesBySubString(searchTerm);
+            	Assert.assertEquals(outputRecipeList.size(), 0);
+            }
+            else
+            {
+            	Assert.fail("Check input file, the result was not expected");
+            }
 		}
-		else if(expectedResult == 1)
-		{
-			Assert.fail("Not yet implemented");
-		}
-		else if(expectedResult == 2)
-		{
-			Assert.fail("Not yet implemented");
-		}
-		else
-		{
-			Assert.fail("Check input file, the result was not expected");
-		}
+		//Run null search word test since we will only ever need 1
+		
 	}
 	
 	
-	public void printRecipeNames(ArrayList<Recipe> recipeList)
+	/**
+	 * A function for checking illegalArgumentException
+	 */
+	@Test
+	public void testIllegalArgumentException()
+	{
+		try
+		{
+				recipeTools.searchRecipesBySubString(null);
+				Assert.fail("A null search string should throw a IllegalArgumentException");
+		}
+		catch(IllegalArgumentException ie)
+		{
+				Exception expectedException=new IllegalArgumentException("Search string can not be null");
+				Assert.assertSame(expectedException, ie);
+		}
+	}
+	
+	/**
+	 * Used to debug recipe names by printing out each one
+	 * @param recipeList
+	 */
+	public static void printRecipeNames(ArrayList<Recipe> recipeList)
 	{
 		Recipe currentRecipe;
 		for(Recipe recipeEntry: recipeList)
@@ -89,7 +129,13 @@ public class ParameterizedRecipeSearchUtilTest {
 		}
 	}
 	
-	public ArrayList<Recipe> initializeRecipeListWithInputList(ArrayList<String> RecipeNames)
+	
+	/**
+	 * Converts a list of Strings to a list of RecipeNames
+	 * @param RecipeNames
+	 * @return
+	 */
+	public static ArrayList<Recipe> initializeRecipeListWithInputList(ArrayList<String> RecipeNames)
 	{
 		//Use defaults for recipe object since RecipeName search is under test
 		ArrayList<String> emptyDirections=new ArrayList<String>();
@@ -109,7 +155,16 @@ public class ParameterizedRecipeSearchUtilTest {
 		return recipeList;
 	}
 	
-	public ArrayList<Recipe> resultListFactory(ArrayList<Recipe> searchWords, 
+	/**
+	 * Factory function generates a list of research space results based on
+	 * Initial parameters
+	 * @param searchWords
+	 * @param indexOfFirstFoundWord
+	 * @param matchSpacing
+	 * @param numberOfMatches
+	 * @return
+	 */
+	public static ArrayList<Recipe> resultListFactory(ArrayList<Recipe> searchWords, 
 			int indexOfFirstFoundWord, int matchSpacing, int numberOfMatches)
 	{
 		ArrayList<Recipe> recipeList=new ArrayList<Recipe>();
@@ -124,37 +179,64 @@ public class ParameterizedRecipeSearchUtilTest {
 		return recipeList;
 	}
 	
+	
 	/**
 	 * Factory function generates a list of search spaces, search words,
 	 * and expected results to feed to a parameterized test
+	 * 
 	 * based on a prime path based graph coverage testing model
 	 * @param searchSpaceSize
 	 * @param searchWordSize
 	 * @param indexOfFirstFoundWord
-	 * @param indexOfFirstCharacterMatch
+	 * @param indexOfFirstCharacterMatch has different meanings depending on expectedResult
+	 * 		when expectedResult=0 first character matches start of search word, when expectedResult=1
+	 *      first  character does not contain the character 
+	 *      in the latin alphabet found at the indexOfFirstCharacter match
+	 * @param matchWordSize has different meanings depending on expectedResult
+	 * 		when expectedResult=0 matchWordSize is the size of the first word that matches
+	 * 		when expectedResult=1 matchWordSize is the size of all words in the input space
 	 * @Param numberOfMatches
 	 * @Param matchSpacing
-	 * @return 
+	 * @return All necessary search test parameters
 	 */
-	public HashMap< String, ArrayList<Recipe>> searchWordsFactory
+	public  static HashMap<String, ArrayList<Recipe>> searchWordsFactory
 	(int searchSpaceSize, int searchWordSize, int indexOfFirstFoundWord, int indexOfFirstCharMatch,
 			int matchWordsSize, int numberOfMatches, int matchSpacing)
 	{
 		String searchWord;
 		ArrayList<String> searchSpace;
 		ArrayList<Recipe> recipeSearchSpace;
+		//For expectedResult 0 indexOfFirstCharMatch is the first character to match
+		//For expectedResult 1 indexOfFirstCharMatch is the first character to not match
 		HashMap<String, ArrayList<Recipe>> inputSpace=new HashMap<String, ArrayList<Recipe>>();
 		char firstCharacter=latinAlphabet[indexOfFirstCharMatch%latinAlphabet.length];
-		searchWord=makeSearchString(searchWordSize, firstCharacter);
-		searchSpace=generateInputSpace(searchSpaceSize, indexOfFirstFoundWord,
-				searchWord, indexOfFirstCharMatch, matchWordsSize, numberOfMatches, matchSpacing);
+		if(expectedResult == 0 || expectedResult == 2 )
+		{
+				searchWord=makeSearchString(searchWordSize, firstCharacter);
+				System.out.println("Search WORD: "+searchWord);
+				searchSpace=generateInputSpace(searchSpaceSize, indexOfFirstFoundWord,
+						searchWord, indexOfFirstCharMatch, matchWordsSize, numberOfMatches, matchSpacing);
+		}
+		else
+		{
+				System.out.println("Enter section");
+				searchWord=makeNoMatchingSearchString(searchWordSize, firstCharacter);
+				System.out.println("Search WORD: "+searchWord);
+				searchSpace=generateNonMatchingInputSpace(searchSpaceSize, searchWord, matchWordsSize,
+						firstCharacter);
+		}
 		recipeSearchSpace=initializeRecipeListWithInputList(searchSpace);
 		inputSpace.put(searchWord, recipeSearchSpace);
 		return inputSpace;
-		
 	}
 	
-	public String makeSearchString(int searchWordSize, char firstCharacter)
+	/**
+	 * Make a search word based on a starting letter and search size
+	 * @param searchWordSize
+	 * @param firstCharacter
+	 * @return a search string
+	 */
+	public  static String makeSearchString(int searchWordSize, char firstCharacter)
 	{
 		String searchString="";
 		int i=0;
@@ -181,7 +263,82 @@ public class ParameterizedRecipeSearchUtilTest {
 		return searchString;
 	}
 	
-	public ArrayList<String> generateInputSpace(int searchSpaceSize, int indexOfFirstFoundWord,
+	
+	/** Make a search word that does not have the starting letter
+	 * @param searchWordSize
+	 * @param firstCharToAvoid
+	 * @return A search string that does not match.
+	 */
+	public static String makeNoMatchingSearchString(int searchWordSize, char firstCharToAvoid) 
+	{
+		System.out.print("The maximum search string size is "+ searchWordSize);
+		char[] searchWord=new char[searchWordSize];
+		int stringSize=0;
+		int i=0;
+		while(stringSize< searchWordSize)
+		{
+			if((latinAlphabet[i] != firstCharToAvoid))
+			{
+				//using a char array instead of a string optimizes performance since we do
+				//not have to keep allocating memory
+				searchWord[stringSize]=latinAlphabet[i];
+				stringSize=stringSize+1;
+				System.out.println("the current String size is "+stringSize);
+			}
+			i=i+1;
+		}
+		return String.valueOf(searchWord);
+	}
+	
+	/**
+	 * Create a list of Recipe Names without the search word
+	 * @param searchSpaceSize use to state the size of the words searched
+	 * @param searchWord use to state the search Word to avoid
+	 * @param wordSize use to state the size of the words in the list
+	 * @param charToAvoid, the character to avoid adding to the inputSpace
+	 * @return
+	 */
+	public static ArrayList<String> generateNonMatchingInputSpace(int searchSpaceSize, String searchWord,
+			int wordSize, char charToAvoid)
+	{
+		System.out.println("The Character to avoid is "+charToAvoid);
+		int a=0;
+		ArrayList<String> stringSearchSpace=new ArrayList<String>();
+		while(a<searchSpaceSize)
+		{
+			char currentChar;
+			int c=0;
+			int charNum=0;
+			String currentSearchString;
+			char[] entryWord=new char[wordSize];
+			while(charNum < wordSize)
+			{
+				currentChar=latinAlphabet[c%latinAlphabet.length];
+				if(currentChar != charToAvoid)
+				{
+					entryWord[charNum]=currentChar;
+					charNum=charNum+1;
+				}
+				c=c+1;
+				
+			}
+			currentSearchString=String.valueOf(entryWord);
+			stringSearchSpace.add(currentSearchString);
+			a=a+1;
+		}
+		return stringSearchSpace;
+	}
+	
+	/**
+	 * Makes a space to search which will perform graph based testing on the recipe search function
+	 * Use for a minimum numberOfMatches of 1 or higher
+	 * @param searchSpeaceSize
+	 * @param indexOfFirstFoundWord
+	 * @param searchWord
+	 * @param numberOfMatches
+	 * @param matchSpacing
+	 */
+	public static ArrayList<String> generateInputSpace(int searchSpaceSize, int indexOfFirstFoundWord,
 			String searchWord, int indexOfFirstCharMatch, 
 			int matchWordSize, int numberOfMatches, int matchSpacing)
 	{
@@ -307,7 +464,13 @@ public class ParameterizedRecipeSearchUtilTest {
 		return inputSpace;
 	}
 	
-	public int gcd(int a, int b)
+	/**
+	 * Used to calculate the GCD needed to make a search space.
+	 * @param a
+	 * @param b
+	 * @return
+	 */
+	public static int gcd(int a, int b)
 	{
 		//a=bq+r
 		/*
