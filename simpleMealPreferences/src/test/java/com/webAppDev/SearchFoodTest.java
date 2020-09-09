@@ -544,7 +544,7 @@ public class SearchFoodTest {
 	 */
 	private void parameterSetupFireFox()
 	{
-		System.setProperty("webdriver.gecko.driver", "/home/ryan/dev/webDrivers/geckodriver");
+		System.setProperty("webdriver.gecko.driver", "/home/ryan/dev/webDrivers/geckodriver_new/geckodriver");
 		this.fireFoxDriver=new FirefoxDriver();
 		this.fireFoxDriver.manage().window().maximize();
 		this.fireFoxDriver.manage().timeouts().pageLoadTimeout(1, TimeUnit.MINUTES);
@@ -553,7 +553,7 @@ public class SearchFoodTest {
 	
 	private void parameterSetupChrome()
 	{
-		System.setProperty("webdriver.chrome.driver", "/home/ryan/dev/webDrivers/chromedriver");
+		System.setProperty("webdriver.chrome.driver", "/home/ryan/dev/webDrivers/chromedriver_new/chromedriver");
 		this.chromeDriver=new ChromeDriver();
 		this.chromeDriver.manage().window().maximize();
 		this.chromeDriver.manage().timeouts().pageLoadTimeout(1, TimeUnit.MINUTES);

@@ -58,15 +58,14 @@ public class Recipe
 		{
 			boolean found=false;
 			int i=0;
-			while(!found || i< RECIPE_CATEGORIES.length)
+			while(!found && i< RECIPE_CATEGORIES.length)
 			{
 				if(catagoryParam.equals(RECIPE_CATEGORIES[i]))
 				{
 					this.category=catagoryParam;
 					found=true;
 				}
-				i=i+1;
-				
+				i=i+1;	
 			}
 		
 			if(!found)
